@@ -279,11 +279,29 @@ h3 {
   text-align: center;
 }
 
+.demo-section {
+  padding: 96px 0 18px;
+}
+
+.demo-frame {
+  width: min(960px, 100%);
+  margin: 36px auto 0;
+  overflow: hidden;
+  border: 1px solid rgba(215, 222, 216, 0.82);
+  border-radius: 8px;
+  background: #0f1715;
+  box-shadow: var(--shadow);
+}
+
+.demo-frame img {
+  width: 100%;
+}
+
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
-  padding: 96px 0;
+  padding: 78px 0 96px;
 }
 
 .feature-card,
@@ -531,6 +549,14 @@ h3 {
 
   .quiet-band {
     padding: 64px 14px;
+  }
+
+  .demo-section {
+    padding: 70px 0 10px;
+  }
+
+  .demo-frame {
+    margin-top: 26px;
   }
 
   .download {

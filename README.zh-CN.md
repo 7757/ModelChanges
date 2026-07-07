@@ -12,6 +12,10 @@
 
 ![ModelChanges 中文官网和连接面板](docs/readme/hero-zh-CN.png)
 
+## 演示
+
+![ModelChanges 模型浏览和本地连接演示](docs/assets/modelchanges-demo.gif)
+
 ## 安装
 
 ```bash

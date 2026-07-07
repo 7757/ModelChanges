@@ -12,6 +12,10 @@ A native macOS app for browsing, deploying, testing, and connecting local Ollama
 
 ![ModelChanges website and connection panel in English](docs/readme/hero-en.png)
 
+## Demo
+
+![ModelChanges model browser and local connection demo](docs/assets/modelchanges-demo.gif)
+
 ## Install
 
 ```bash
