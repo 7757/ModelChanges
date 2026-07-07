@@ -6,6 +6,8 @@ DerivedData/
 *.dmg
 *.zip
 *.xcarchive
+*.mov
+*.MOV
 node_modules/
 .env
 .env.*

@@ -12,8 +12,6 @@
     const browser = navigator.language || "en";
     if (supported.includes(browser)) return browser;
     if (browser.startsWith("zh")) return "zh-CN";
-    if (browser.startsWith("ja")) return "ja";
-    if (browser.startsWith("ko")) return "ko";
     return "en";
   }
 
@@ -24,6 +22,10 @@
       const key = node.getAttribute("data-i18n");
       if (pack[key]) node.textContent = pack[key];
     });
+    const shot = document.querySelector("[data-localized-shot]");
+    if (shot) {
+      shot.src = `assets/localized/endpoint-panel-${lang}.png`;
+    }
     const selector = document.querySelector("[data-language]");
     if (selector) selector.value = lang;
     localStorage.setItem("modelchanges-language", lang);
