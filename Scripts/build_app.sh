@@ -34,6 +34,16 @@ mkdir -p "$APP/Contents/Resources"
 cp "$BIN" "$APP/Contents/MacOS/$APP_NAME"
 [[ -f "$ROOT/Resources/AppIcon.icns" ]] && cp "$ROOT/Resources/AppIcon.icns" "$APP/Contents/Resources/AppIcon.icns"
 
+# Bundle the Ollama runtime so users never install Ollama separately.
+if [[ ! -x "$ROOT/vendor/ollama-runtime/ollama" ]]; then
+    echo "▸ Preparing bundled Ollama runtime…"
+    "$ROOT/Scripts/prepare_runtime.sh"
+fi
+echo "▸ Bundling Ollama runtime…"
+mkdir -p "$APP/Contents/Resources/ollama-runtime"
+cp -R "$ROOT/vendor/ollama-runtime/." "$APP/Contents/Resources/ollama-runtime/"
+chmod +x "$APP/Contents/Resources/ollama-runtime/ollama" 2>/dev/null || true
+
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -56,6 +66,12 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 PLIST
 
 echo "▸ Ad-hoc signing…"
+# Re-sign the bundled runtime binaries (thinned to arm64, so old signatures are stale).
+if [[ -d "$APP/Contents/Resources/ollama-runtime" ]]; then
+    find "$APP/Contents/Resources/ollama-runtime" -type f \
+        \( -name "*.dylib" -o -name "ollama" -o -name "llama-server" -o -name "llama-quantize" -o -name "mlx_metal_*" \) \
+        -exec codesign --force --sign - {} \; 2>/dev/null || true
+fi
 codesign --force --deep --sign - "$APP" >/dev/null 2>&1 || echo "  (codesign skipped)"
 
 echo "✓ Built $APP"

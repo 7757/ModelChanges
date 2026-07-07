@@ -1,6 +1,7 @@
 .build/
 build/
 dist/
+vendor/
 DerivedData/
 *.app/
 *.dmg

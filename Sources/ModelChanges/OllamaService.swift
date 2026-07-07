@@ -29,6 +29,10 @@ final class AppState: ObservableObject {
     @Published var lastError: String?
     @Published var actionLog: [String] = []
     @Published var history: [HistoryEntry] = []
+    @Published var unavailableTags: Set<String> = []       // known-not-pullable
+    @Published var importableModels: [String] = []         // found in a legacy ~/.ollama
+    @Published var importDismissed = false
+    @Published var importing = false
     @Published var keepAlive: String = "30m"   // how long models stay loaded
     @Published var wiping = false
     @Published var launchAtLogin: Bool = LoginItem.isEnabled
@@ -58,6 +62,19 @@ final class AppState: ObservableObject {
 
     let host = "http://127.0.0.1:11434"
 
+    /// The Ollama runtime we ship *inside* the app (Contents/Resources/ollama-runtime).
+    var bundledBinaryURL: URL? {
+        Bundle.main.resourceURL?.appendingPathComponent("ollama-runtime/ollama")
+    }
+    var hasBundledRuntime: Bool {
+        guard let u = bundledBinaryURL else { return false }
+        return FileManager.default.isExecutableFile(atPath: u.path)
+    }
+    /// Our own isolated model store, so nothing leaks onto the host.
+    var modelsDirURL: URL {
+        LibraryCache.directory.appendingPathComponent("models", isDirectory: true)
+    }
+
     private var pullTasks: [String: Task<Void, Never>] = [:]
     private var pollTask: Task<Void, Never>?
     private var librarySyncTask: Task<Void, Never>?
@@ -77,7 +94,54 @@ final class AppState: ObservableObject {
             models = LibrarySeed.models
         }
         history = HistoryStore.load()
+        unavailableTags = UnavailableStore.load()
+        importDismissed = UserDefaults.standard.bool(forKey: "ModelChanges.importDismissed")
         detectInstall()
+        scanImportableModels()
+    }
+
+    // MARK: - Import existing models from a legacy ~/.ollama
+
+    private var legacyModelsDir: URL {
+        FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".ollama/models")
+    }
+
+    /// Look for models in a separate Ollama install so we can offer to import them.
+    func scanImportableModels() {
+        let manifests = legacyModelsDir.appendingPathComponent("manifests")
+        guard FileManager.default.fileExists(atPath: manifests.path) else { importableModels = []; return }
+        var found: [String] = []
+        if let e = FileManager.default.enumerator(at: manifests, includingPropertiesForKeys: [.isRegularFileKey]) {
+            for case let url as URL in e where (try? url.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile) == true {
+                let parts = url.pathComponents
+                if parts.count >= 2 { found.append("\(parts[parts.count - 2]):\(parts.last!)") }
+            }
+        }
+        importableModels = found.sorted()
+    }
+
+    /// Merge the legacy model store into our bundled one (blobs are content-addressed).
+    func importLegacyModels() {
+        guard !importing else { return }
+        importing = true
+        let src = legacyModelsDir.path
+        let dst = modelsDirURL.path
+        Task {
+            log(t("log.importing"))
+            try? FileManager.default.createDirectory(atPath: dst, withIntermediateDirectories: true)
+            await Task.detached { _ = try? Self.runSyncStatic("/usr/bin/rsync", ["-a", src + "/", dst + "/"]) }.value
+            BundledServer.shared.stop()          // restart so it rescans the merged store
+            startServer()
+            importableModels = []
+            dismissImport()
+            importing = false
+            log(t("log.imported"))
+        }
+    }
+
+    func dismissImport() {
+        importDismissed = true
+        UserDefaults.standard.set(true, forKey: "ModelChanges.importDismissed")
     }
 
     // MARK: - History
@@ -113,16 +177,25 @@ final class AppState: ObservableObject {
         if syncing { return }
         syncing = true
         syncError = nil
-        do {
-            let fetched = try await Library.fetch(sort: sort)
-            models = fetched
-            let now = Date()
-            librarySyncedAt = now
-            LibraryCache.save(LibrarySnapshot(models: fetched, fetchedAt: now, sort: sort.rawValue))
-            log(t("log.synced", fetched.count))
-        } catch {
-            syncError = t("error.syncFailed", error.localizedDescription)
+        // ollama.com can be slow / flaky (transient TLS handshake failures).
+        // Retry a few times before surfacing an error.
+        var lastErr: Error?
+        for attempt in 1...3 {
+            do {
+                let fetched = try await Library.fetch(sort: sort)
+                models = fetched
+                let now = Date()
+                librarySyncedAt = now
+                LibraryCache.save(LibrarySnapshot(models: fetched, fetchedAt: now, sort: sort.rawValue))
+                log(t("log.synced", fetched.count))
+                syncing = false
+                return
+            } catch {
+                lastErr = error
+                if attempt < 3 { try? await Task.sleep(nanoseconds: 1_200_000_000) }
+            }
         }
+        syncError = t("error.syncFailed", lastErr?.localizedDescription ?? "")
         syncing = false
     }
 
@@ -283,12 +356,13 @@ final class AppState: ObservableObject {
                 guard !line.isEmpty, let d = line.data(using: .utf8) else { continue }
                 guard let p = try? Self.decoder.decode(PullLine.self, from: d) else { continue }
                 if let err = p.error {
-                    await MainActor.run { self.fail(tag, err) }
+                    await MainActor.run { self.failPull(tag, err) }
                     return false
                 }
+                let status = p.status ?? ""
                 await MainActor.run {
-                    var dp = self.deployments[tag] ?? DeployProgress(tag: tag, status: p.status)
-                    dp.status = p.status
+                    var dp = self.deployments[tag] ?? DeployProgress(tag: tag, status: status)
+                    if !status.isEmpty { dp.status = status }
                     dp.total = p.total ?? dp.total
                     dp.completed = p.completed ?? (p.total != nil ? dp.completed : 0)
                     dp.phase = .pulling
@@ -378,8 +452,8 @@ final class AppState: ObservableObject {
         }
     }
 
-    /// Return the host to its pre-install state: stop + delete all models,
-    /// stop the server, uninstall Ollama, and wipe ~/.ollama.
+    /// Erase every model and all app data. The bundled engine can't be
+    /// "uninstalled" — to remove the app itself, drag it to the Trash.
     func resetHost() {
         guard !wiping else { return }
         wiping = true
@@ -388,31 +462,18 @@ final class AppState: ObservableObject {
             for m in running { _ = try? await postJSON("/api/generate", ["model": m.name, "keep_alive": 0]) }
             for name in installed.map(\.name) { await deleteModel(name) }
             await refresh()
-            let home = FileManager.default.homeDirectoryForCurrentUser.path
-            await Task.detached { Self.runResetSync(home: home) }.value
-            serverReachable = false
-            serverVersion = nil
-            ollamaInstalled = false
-            ollamaPath = nil
-            for appPath in Self.ollamaAppCandidates() {
-                _ = try? Self.runSyncStatic("/bin/rm", ["-rf", appPath])
-            }
+            // Stop our bundled server and wipe our isolated model store + app data.
+            BundledServer.shared.stop()
+            try? FileManager.default.removeItem(at: modelsDirURL)
+            history = []; HistoryStore.save(history)
+            unavailableTags = []; UnavailableStore.save(unavailableTags)
             installed = []
             running = []
-            detectInstall()
-            record("host", .wiped)
             log(t("log.hostCleaned"))
+            // Bring a clean server back up.
+            startServer()
             wiping = false
         }
-    }
-
-    nonisolated private static func runResetSync(home: String) {
-        _ = try? runSyncStatic("/usr/bin/killall", ["ollama"])
-        if let brew = ["/opt/homebrew/bin/brew", "/usr/local/bin/brew"]
-            .first(where: { FileManager.default.isExecutableFile(atPath: $0) }) {
-            _ = try? runSyncStatic(brew, ["uninstall", "ollama"])
-        }
-        _ = try? runSyncStatic("/bin/rm", ["-rf", home + "/.ollama"])
     }
 
     // MARK: - Test chat
@@ -601,6 +662,12 @@ final class AppState: ObservableObject {
     // MARK: - Local process control
 
     func detectInstall() {
+        // The bundled runtime means Ollama is always "installed" from the user's view.
+        if hasBundledRuntime {
+            ollamaPath = bundledBinaryURL?.path
+            ollamaInstalled = true
+            return
+        }
         let candidates = ["/opt/homebrew/bin/ollama", "/usr/local/bin/ollama"]
         for path in candidates where FileManager.default.isExecutableFile(atPath: path) {
             ollamaPath = path
@@ -624,23 +691,26 @@ final class AppState: ObservableObject {
         }
     }
 
-    /// Start the Ollama server (launches the app or `ollama serve`).
+    /// Ensure a local Ollama server is running — prefer our bundled runtime.
     func startServer() {
         log(t("log.startingServer"))
-        Task.detached { [host = self.host, path = self.ollamaPath] in
-            if let appPath = Self.ollamaAppPath() {
-                _ = try? Self.runDetached("/usr/bin/open", [appPath])
-            } else if let path {
-                _ = try? Self.runDetached(path, ["serve"])
+        Task { [weak self] in
+            guard let self else { return }
+            await self.fetchVersion()
+            if self.serverReachable { self.detectInstall(); return }  // already up
+
+            if self.hasBundledRuntime, let bin = self.bundledBinaryURL {
+                BundledServer.shared.start(binary: bin, modelsDir: self.modelsDirURL, host: "127.0.0.1:11434")
+            } else if let appPath = Self.ollamaAppPath() {
+                _ = try? await Task.detached { try Self.runDetached("/usr/bin/open", [appPath]) }.value
+            } else if let path = self.ollamaPath {
+                _ = try? await Task.detached { try Self.runDetached(path, ["serve"]) }.value
             }
-            _ = host
-        }
-        // Give the server a moment then refresh.
-        Task {
-            for _ in 0..<10 {
-                try? await Task.sleep(nanoseconds: 800_000_000)
-                await refresh()
-                if serverReachable { log(t("log.serverUp")); break }
+
+            for _ in 0..<20 {
+                try? await Task.sleep(nanoseconds: 600_000_000)
+                await self.refresh()
+                if self.serverReachable { self.detectInstall(); self.log(self.t("log.serverUp")); break }
             }
         }
     }
@@ -780,5 +850,23 @@ final class AppState: ObservableObject {
         deployments[tag]?.status = message
         lastError = t("error.failedTag", tag, message)
         log(t("log.failedTag", tag, message))
+    }
+
+    /// Turn a raw Ollama pull error into a clear, user-facing message.
+    private func failPull(_ tag: String, _ raw: String) {
+        let lower = raw.lowercased()
+        let notPullable = lower.contains("manifest")
+            || lower.contains("does not exist")
+            || lower.contains("not found")
+            || lower.contains("no such")
+        if notPullable {
+            unavailableTags.insert(tag)
+            UnavailableStore.save(unavailableTags)
+            deployments[tag] = nil                 // remove the stuck progress bar
+            lastError = t("error.modelNotPullable", tag)
+            log(t("log.failedTag", tag, raw))
+        } else {
+            fail(tag, raw)
+        }
     }
 }

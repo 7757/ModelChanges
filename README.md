@@ -74,3 +74,16 @@ SwiftUI app  ->  Ollama server on localhost:11434  ->  local model
 ```
 
 The live model catalog is fetched from `https://ollama.com/library`, cached locally, and refreshed on demand.
+
+## Roadmap
+
+Ongoing work, roughly in priority order:
+
+- **Signed & notarized builds** — ship with a Developer ID so first launch has no Gatekeeper prompt.
+- **In-app auto-update** — check GitHub Releases and update in place.
+- **Agent presets** — save a base URL + model as a named profile and copy it into common frameworks in one click.
+- **Live throughput** — show tokens/sec and time-to-first-token per running model.
+- **Quantization picker** — choose the exact tag/quant per model instead of the default.
+- **Multi-turn playground** — a small chat window for quick manual testing, not just single prompts.
+- **Slimmer runtime** — trim the bundled engine further, with an optional download-on-first-run.
+- **Hugging Face GGUF search** — pull community GGUF models directly, not just the Ollama library.

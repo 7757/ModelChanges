@@ -265,7 +265,9 @@ struct OllamaDetails: Codable, Hashable {
 }
 
 struct PullLine: Codable {
-    var status: String
+    // Ollama's error line has NO "status" field — status must be optional or
+    // that line fails to decode and the error gets silently swallowed.
+    var status: String?
     var digest: String?
     var total: Int64?
     var completed: Int64?

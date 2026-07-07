@@ -107,6 +107,7 @@ struct InspectorVariantRow: View {
     let variant: LiveVariant
 
     private var fit: FitStatus { Hardware.fit(estRAMGB: variant.estRAMGB, ramGB: app.ramGB) }
+    private var unavailable: Bool { app.unavailableTags.contains(variant.tag) }
 
     var body: some View {
         VStack(spacing: 8) {
@@ -121,17 +122,22 @@ struct InspectorVariantRow: View {
                         }
                     }
                     HStack(spacing: 8) {
-                        if variant.estDiskGB > 0 {
-                            Label("~\(Fmt.gb(variant.estDiskGB))", systemImage: "arrow.down.circle")
-                            Label(app.t("inspector.ram", Fmt.gb(variant.estRAMGB)), systemImage: "memorychip")
+                        if unavailable {
+                            Label(app.t("badge.unavailable"), systemImage: "xmark.octagon.fill")
+                                .foregroundStyle(.red)
+                        } else {
+                            if variant.estDiskGB > 0 {
+                                Label("~\(Fmt.gb(variant.estDiskGB))", systemImage: "arrow.down.circle")
+                                Label(app.t("inspector.ram", Fmt.gb(variant.estRAMGB)), systemImage: "memorychip")
+                            }
+                            Label(fit.label(language: app.language), systemImage: fit.symbol)
+                                .foregroundStyle(fit.color)
                         }
-                        Label(fit.label(language: app.language), systemImage: fit.symbol)
-                            .foregroundStyle(fit.color)
                     }
                     .font(.caption2).foregroundStyle(.secondary)
                 }
                 Spacer()
-                VariantActionButton(tag: variant.tag, fit: fit)
+                VariantActionButton(tag: variant.tag, fit: fit, unavailable: unavailable)
             }
             if let progress = app.deployments[variant.tag] {
                 DeployProgressView(progress: progress)
@@ -148,6 +154,7 @@ struct VariantActionButton: View {
     @EnvironmentObject var app: AppState
     let tag: String
     var fit: FitStatus = .fits
+    var unavailable: Bool = false
 
     var body: some View {
         let progress = app.deployments[tag]
@@ -165,6 +172,10 @@ struct VariantActionButton: View {
             Button { app.deploy(tag) } label: {
                 Label(app.t("button.start"), systemImage: "play.fill")
             }.buttonStyle(.borderedProminent).controlSize(.small).disabled(!app.serverReachable)
+        } else if unavailable {
+            Button { } label: { Label(app.t("button.unavailable"), systemImage: "xmark.octagon") }
+                .controlSize(.small).disabled(true)
+                .help(app.t("error.modelNotPullable", tag))
         } else if fit == .tooBig {
             Button { } label: { Label(app.t("button.tooLarge"), systemImage: "xmark.octagon") }
                 .controlSize(.small).disabled(true)
@@ -184,14 +195,18 @@ struct DeployProgressView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                Text(statusText).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
+                Text(statusText).font(.caption2)
+                    .foregroundStyle(progress.phase == .failed ? Color.red : Color.secondary)
+                    .lineLimit(2)
                 Spacer()
-                if progress.total > 0 {
+                if progress.total > 0 && progress.phase != .failed {
                     Text("\(Fmt.bytes(progress.completed)) / \(Fmt.bytes(progress.total))")
                         .font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
                 }
             }
-            if progress.phase == .loading || progress.total == 0 {
+            if progress.phase == .failed {
+                EmptyView()
+            } else if progress.phase == .loading || progress.total == 0 {
                 ProgressView().progressViewStyle(.linear)
             } else {
                 ProgressView(value: progress.fraction)

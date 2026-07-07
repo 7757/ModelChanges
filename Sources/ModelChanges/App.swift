@@ -17,6 +17,7 @@ struct ModelChangesApp: App {
                 .frame(minWidth: 800, minHeight: 540)
                 .background(StatusBarInstaller().environmentObject(app))
                 .task {
+                    app.startServer()        // launch the bundled Ollama runtime
                     app.startPolling()
                     app.startLibrarySync()
                 }
@@ -36,6 +37,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // Keep running in the menu bar after the window is closed.
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
 
+    // Stop the bundled Ollama server when the app quits — nothing left running.
+    func applicationWillTerminate(_ notification: Notification) {
+        BundledServer.shared.stop()
+    }
+
     // Clicking the Dock icon restores the existing window instead of nothing.
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         if !flag {
@@ -45,6 +51,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             NSApp.activate(ignoringOtherApps: true)
         }
         return true
+    }
+}
+
+// MARK: - Import banner
+
+struct ImportBanner: View {
+    @EnvironmentObject var app: AppState
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "square.and.arrow.down.on.square")
+                .foregroundStyle(Brand.accent)
+            Text(app.t("import.title", app.importableModels.count))
+                .font(.callout)
+            Spacer(minLength: 8)
+            if app.importing {
+                ProgressView().controlSize(.small)
+            } else {
+                Button(app.t("import.button")) { app.importLegacyModels() }
+                    .buttonStyle(.borderedProminent).controlSize(.small)
+                Button(app.t("import.dismiss")) { app.dismissImport() }
+                    .buttonStyle(.plain).font(.caption).foregroundStyle(.secondary)
+            }
+        }
+        .padding(.horizontal, 16).padding(.vertical, 8)
+        .background(Brand.accent.opacity(0.08))
     }
 }
 
@@ -89,6 +120,10 @@ struct RootView: View {
                 Divider().opacity(0.5)
                 filterBar
                 Divider().opacity(0.5)
+                if !app.importableModels.isEmpty && !app.importDismissed {
+                    ImportBanner()
+                    Divider().opacity(0.5)
+                }
                 ModelGrid(models: filtered, selected: $selected)
             }
             .safeAreaInset(edge: .bottom, spacing: 0) {

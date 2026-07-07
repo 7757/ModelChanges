@@ -120,6 +120,17 @@ enum LibraryCache {
     }
 }
 
+enum UnavailableStore {
+    static var file: URL { LibraryCache.directory.appendingPathComponent("unavailable.json") }
+    static func load() -> Set<String> {
+        guard let data = try? Data(contentsOf: file) else { return [] }
+        return (try? JSONDecoder().decode(Set<String>.self, from: data)) ?? []
+    }
+    static func save(_ set: Set<String>) {
+        if let data = try? JSONEncoder().encode(set) { try? data.write(to: file) }
+    }
+}
+
 enum HistoryStore {
     static var file: URL { LibraryCache.directory.appendingPathComponent("history.json") }
 
