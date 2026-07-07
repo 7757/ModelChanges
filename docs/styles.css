@@ -435,11 +435,30 @@ h3 {
 }
 
 .footer p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
   margin: 0;
 }
 
 .footer div {
   gap: 18px;
+}
+
+.author-credit {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.footer-dot {
+  color: #b7beb8;
+}
+
+.author-link {
+  color: var(--ink);
+  font-weight: 760;
 }
 
 @media (max-width: 980px) {

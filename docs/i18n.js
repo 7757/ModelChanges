@@ -49,6 +49,7 @@ window.ModelChangesI18n = {
     "updates.item2": "Local OpenAI-compatible endpoint examples for apps, SDKs, and agents.",
     "updates.item3": "Capability testing for text, tools, embeddings, and vision models.",
     "footer.tagline": "Made for local-first AI workflows on macOS.",
+    "footer.authorPrefix": "Made by",
     "footer.license": "MIT License",
     "footer.source": "Source"
   },
@@ -102,6 +103,7 @@ window.ModelChangesI18n = {
     "updates.item2": "为应用、SDK 和 agent 提供本地 OpenAI 兼容端点示例。",
     "updates.item3": "支持文本、工具、嵌入和视觉模型的能力测试。",
     "footer.tagline": "为 macOS 上的本地优先 AI 工作流而做。",
+    "footer.authorPrefix": "作者：",
     "footer.license": "MIT 许可证",
     "footer.source": "源码"
   }
