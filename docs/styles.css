@@ -42,29 +42,51 @@ img {
 
 .site-header {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 10;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  padding: 18px 28px;
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(16px);
-  transition: box-shadow 180ms ease, border-color 180ms ease, padding 180ms ease;
+  width: min(1180px, calc(100% - 28px));
+  padding: 12px 16px 12px 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: rgba(250, 251, 249, 0.6);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    0 10px 30px -12px rgba(18, 26, 22, 0.28),
+    0 2px 8px -3px rgba(18, 26, 22, 0.10);
+  transition: padding 260ms cubic-bezier(0.22, 0.61, 0.36, 1),
+              background 260ms ease, box-shadow 260ms ease, border-color 260ms ease;
+}
+
+/* frosted sheen along the top edge */
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 42%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 .site-header.is-scrolled {
-  margin: 12px auto 0;
-  width: min(1180px, calc(100% - 28px));
-  right: 0;
-  left: 0;
-  padding: 11px 14px;
-  border: 1px solid rgba(222, 228, 222, 0.88);
-  border-radius: var(--radius);
-  box-shadow: 0 14px 38px rgba(18, 26, 22, 0.10);
+  padding: 8px 14px 8px 18px;
+  background: rgba(250, 251, 249, 0.8);
+  border-color: rgba(255, 255, 255, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 18px 44px -16px rgba(18, 26, 22, 0.36),
+    0 3px 10px -3px rgba(18, 26, 22, 0.14);
 }
 
 .brand,
@@ -464,6 +486,10 @@ h3 {
 @media (max-width: 980px) {
   .site-header {
     position: sticky;
+    top: 8px;
+    left: auto;
+    transform: none;
+    margin: 8px auto 0;
     flex-wrap: wrap;
   }
 
@@ -588,5 +614,122 @@ h3 {
 
   .install-box button {
     height: 44px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Ambient depth — gives the frosted header something to blur, adds quiet depth
+   --------------------------------------------------------------------------- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(880px 520px at 82% -8%, rgba(0, 166, 122, 0.12), transparent 60%),
+    radial-gradient(680px 460px at 4% 0%, rgba(0, 166, 122, 0.06), transparent 55%);
+}
+
+/* ---------------------------------------------------------------------------
+   Motion & micro-interactions
+   --------------------------------------------------------------------------- */
+
+/* animated underline for primary nav */
+.nav a {
+  position: relative;
+  padding-bottom: 3px;
+}
+.nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 220ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.nav a:hover::after {
+  transform: scaleX(1);
+}
+
+/* button + link lift */
+.primary-cta,
+.primary-link,
+.install-box button {
+  transition: background 160ms ease, transform 160ms ease, box-shadow 200ms ease;
+}
+.primary-cta:hover,
+.primary-link:hover,
+.install-box button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px -10px rgba(0, 137, 102, 0.6);
+}
+.primary-cta:active,
+.primary-link:active,
+.install-box button:active {
+  transform: translateY(0);
+}
+.secondary-cta {
+  transition: background 160ms ease, transform 160ms ease;
+}
+.secondary-cta:hover {
+  transform: translateY(-1px);
+}
+
+/* feature cards + steps lift on hover */
+.feature-card,
+.step {
+  transition: transform 220ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 220ms ease, border-color 220ms ease;
+}
+.feature-card:hover,
+.step:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 44px -24px rgba(18, 26, 22, 0.4);
+}
+
+/* product shot floats a touch */
+.hero-visual .product-shot {
+  transition: transform 400ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 400ms ease;
+}
+.hero-visual:hover .product-shot {
+  transform: translateY(-6px);
+  box-shadow: 0 40px 90px rgba(16, 24, 20, 0.2);
+}
+
+/* scroll-reveal — applied by app.js (progressive enhancement) */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 640ms cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 640ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+[data-reveal].in-view {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  [data-reveal],
+  .site-header,
+  .feature-card,
+  .step,
+  .product-shot,
+  .primary-cta,
+  .primary-link {
+    transition: none !important;
+  }
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
   }
 }

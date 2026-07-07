@@ -91,9 +91,43 @@
     document.body.appendChild(script);
   }
 
+  function wireReveal() {
+    const targets = Array.from(document.querySelectorAll(
+      ".hero-copy, .hero-visual, .section-heading, .feature-card, .step, .install-box, .download-links, .release-list li, .demo-frame"
+    ));
+    if (!targets.length) return;
+
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || !("IntersectionObserver" in window)) {
+      targets.forEach((node) => node.classList.add("in-view"));
+      return;
+    }
+
+    // Stagger items that share a parent (cards, steps, release items).
+    const seen = new Map();
+    targets.forEach((node) => {
+      node.setAttribute("data-reveal", "");
+      const index = seen.get(node.parentElement) || 0;
+      seen.set(node.parentElement, index + 1);
+      if (index > 0) node.style.setProperty("--reveal-delay", `${Math.min(index, 5) * 70}ms`);
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in-view");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.12 });
+
+    targets.forEach((node) => observer.observe(node));
+  }
+
   wireLanguage();
   wireHeader();
   wireInstallCopy();
+  wireReveal();
   loadDownloadCount();
   loadGoatCounter();
 })();
