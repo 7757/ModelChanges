@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ModelChanges - Local models, ready for real work</title>
+  <meta name="description" content="A native macOS app for browsing, deploying, testing, and connecting local Ollama models.">
+  <meta property="og:title" content="ModelChanges">
+  <meta property="og:description" content="Browse open models and run them locally from a native macOS app.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/endpoint-panel.png">
+  <link rel="icon" href="assets/app-icon.png">
+  <link rel="stylesheet" href="styles.css?v=1">
+</head>
+<body>
+  <header class="site-header" data-header>
+    <a class="brand" href="#top" aria-label="ModelChanges home">
+      <img src="assets/app-icon.png" alt="" width="34" height="34">
+      <span>ModelChanges</span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a href="#features" data-i18n="nav.features">Features</a>
+      <a href="#workflow" data-i18n="nav.workflow">Workflow</a>
+      <a href="#download" data-i18n="nav.download">Download</a>
+      <a href="#updates" data-i18n="nav.updates">Updates</a>
+    </nav>
+    <div class="header-actions">
+      <select class="language" data-language aria-label="Language">
+        <option value="en">English</option>
+        <option value="zh-CN">简体中文</option>
+        <option value="ja">日本語</option>
+        <option value="ko">한국어</option>
+      </select>
+      <a class="ghost-link" href="https://github.com/7757/ModelChanges" data-i18n="nav.github">GitHub</a>
+      <a class="primary-link" href="#download" data-i18n="nav.get">Get the app</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero section">
+      <div class="hero-copy">
+        <p class="eyebrow" data-i18n="hero.eyebrow">Native macOS app for local AI</p>
+        <h1 data-i18n="hero.title">Local models, ready for real work.</h1>
+        <p class="hero-subtitle" data-i18n="hero.subtitle">Browse open models, deploy them to this Mac, and connect any OpenAI-compatible app to a private local endpoint.</p>
+        <div class="hero-actions">
+          <a class="primary-cta" href="#download" data-i18n="hero.primary">Download for macOS</a>
+          <a class="secondary-cta" href="https://github.com/7757/ModelChanges" data-i18n="hero.secondary">View source</a>
+        </div>
+        <dl class="hero-stats">
+          <div>
+            <dt data-i18n="stats.modelsValue">236+</dt>
+            <dd data-i18n="stats.modelsLabel">live Ollama models</dd>
+          </div>
+          <div>
+            <dt data-i18n="stats.endpointValue">OpenAI</dt>
+            <dd data-i18n="stats.endpointLabel">compatible endpoint</dd>
+          </div>
+          <div data-download-stat hidden>
+            <dt data-download-count>0</dt>
+            <dd data-i18n="stats.downloadsLabel">downloads</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="hero-visual" aria-label="ModelChanges connection panel preview">
+        <img class="product-shot" src="assets/endpoint-panel.png" alt="ModelChanges connection panel showing local endpoint addresses and a model test box">
+        <div class="mini-popover">
+          <img src="assets/menubar-popover.png" alt="ModelChanges menu bar popover showing loaded models and memory usage">
+        </div>
+      </div>
+    </section>
+
+    <section class="section quiet-band" aria-labelledby="what-it-does">
+      <div class="section-heading">
+        <p class="eyebrow" data-i18n="intro.eyebrow">Why it exists</p>
+        <h2 id="what-it-does" data-i18n="intro.title">A calmer way to run local AI.</h2>
+        <p data-i18n="intro.body">ModelChanges turns the Ollama model universe into a simple Mac control center: choose a model, load it, test it, and hand the endpoint to your tools.</p>
+      </div>
+    </section>
+
+    <section class="section feature-grid" id="features" aria-label="Features">
+      <article class="feature-card">
+        <span class="feature-index">01</span>
+        <h3 data-i18n="features.catalog.title">Browse models with context</h3>
+        <p data-i18n="features.catalog.body">Search the live Ollama library, compare model types, see estimated RAM fit, and pick a variant without opening the terminal.</p>
+      </article>
+      <article class="feature-card">
+        <span class="feature-index">02</span>
+        <h3 data-i18n="features.deploy.title">Deploy in one move</h3>
+        <p data-i18n="features.deploy.body">Download and load a model in one flow, then start, stop, or remove it from a compact menu bar control.</p>
+      </article>
+      <article class="feature-card">
+        <span class="feature-index">03</span>
+        <h3 data-i18n="features.connect.title">Connect the tools you already use</h3>
+        <p data-i18n="features.connect.body">Copy local URLs, Python examples, curl examples, and capability tests for the selected model.</p>
+      </article>
+    </section>
+
+    <section class="section workflow" id="workflow">
+      <div class="workflow-copy">
+        <p class="eyebrow" data-i18n="workflow.eyebrow">Workflow</p>
+        <h2 data-i18n="workflow.title">From model choice to local endpoint.</h2>
+        <p data-i18n="workflow.body">The app keeps the moving parts visible without making regular users learn server commands.</p>
+      </div>
+      <div class="steps" aria-label="Workflow steps">
+        <div class="step">
+          <span>1</span>
+          <h3 data-i18n="workflow.step1.title">Choose</h3>
+          <p data-i18n="workflow.step1.body">Filter by chat, code, vision, reasoning, embeddings, or audio.</p>
+        </div>
+        <div class="step">
+          <span>2</span>
+          <h3 data-i18n="workflow.step2.title">Run</h3>
+          <p data-i18n="workflow.step2.body">Deploy the model and watch memory usage from the dock.</p>
+        </div>
+        <div class="step">
+          <span>3</span>
+          <h3 data-i18n="workflow.step3.title">Connect</h3>
+          <p data-i18n="workflow.step3.body">Use the OpenAI-compatible URL in apps, SDKs, or agents.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section download" id="download">
+      <div class="download-copy">
+        <p class="eyebrow" data-i18n="download.eyebrow">Download</p>
+        <h2 data-i18n="download.title">Install from GitHub Releases.</h2>
+        <p data-i18n="download.body">The installer quits the old app, installs the latest release into Applications, clears quarantine, and opens ModelChanges.</p>
+      </div>
+      <div class="install-box">
+        <code data-install-command>curl -fsSL https://7757.github.io/ModelChanges/install.sh | sh</code>
+        <button type="button" data-copy-install data-i18n="download.copy">Copy</button>
+      </div>
+      <div class="download-links">
+        <a href="https://github.com/7757/ModelChanges/releases/latest/download/ModelChanges-macOS.zip" data-i18n="download.zip">Download ZIP</a>
+        <a href="install.sh" data-i18n="download.script">View install script</a>
+      </div>
+    </section>
+
+    <section class="section updates" id="updates">
+      <div class="section-heading">
+        <p class="eyebrow" data-i18n="updates.eyebrow">Release notes</p>
+        <h2 data-i18n="updates.title">ModelChanges 1.0.0</h2>
+      </div>
+      <ul class="release-list">
+        <li data-i18n="updates.item1">Initial public release with live model browsing and one-click deployment.</li>
+        <li data-i18n="updates.item2">Local OpenAI-compatible endpoint examples for apps, SDKs, and agents.</li>
+        <li data-i18n="updates.item3">Capability testing for text, tools, embeddings, and vision models.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p data-i18n="footer.tagline">Made for local-first AI workflows on macOS.</p>
+    <div>
+      <a href="https://github.com/7757/ModelChanges/blob/main/LICENSE" data-i18n="footer.license">MIT License</a>
+      <a href="https://github.com/7757/ModelChanges" data-i18n="footer.source">Source</a>
+    </div>
+  </footer>
+
+  <script src="site-config.js?v=1"></script>
+  <script src="i18n.js?v=1"></script>
+  <script src="app.js?v=1"></script>
+</body>
+</html>

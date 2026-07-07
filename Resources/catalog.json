@@ -1,0 +1,580 @@
+{
+  "version": 1,
+  "updated": "2026-07",
+  "models": [
+    {
+      "id": "llama3.2",
+      "displayName": "Llama 3.2",
+      "developer": "Meta",
+      "family": "llama",
+      "types": ["chat"],
+      "description": "Small, efficient Llama models built for on-device and edge use. Strong instruction following and tool calling at tiny sizes.",
+      "license": "Llama 3.2 Community License",
+      "contextLength": 131072,
+      "releaseDate": "2024-09",
+      "capabilities": ["tools", "multilingual"],
+      "homepage": "https://ollama.com/library/llama3.2",
+      "variants": [
+        { "tag": "llama3.2:1b", "params": "1B", "sizeGB": 1.3, "quant": "Q4_K_M", "minRAMGB": 4 },
+        { "tag": "llama3.2:3b", "params": "3B", "sizeGB": 2.0, "quant": "Q4_K_M", "minRAMGB": 8 }
+      ]
+    },
+    {
+      "id": "llama3.1",
+      "displayName": "Llama 3.1",
+      "developer": "Meta",
+      "family": "llama",
+      "types": ["chat"],
+      "description": "Meta's flagship general-purpose models with strong reasoning, coding and 128K context. Excellent all-round agent backbone.",
+      "license": "Llama 3.1 Community License",
+      "contextLength": 131072,
+      "releaseDate": "2024-07",
+      "capabilities": ["tools", "multilingual"],
+      "homepage": "https://ollama.com/library/llama3.1",
+      "variants": [
+        { "tag": "llama3.1:8b", "params": "8B", "sizeGB": 4.9, "quant": "Q4_K_M", "minRAMGB": 12 },
+        { "tag": "llama3.1:70b", "params": "70B", "sizeGB": 43.0, "quant": "Q4_K_M", "minRAMGB": 64 },
+        { "tag": "llama3.1:405b", "params": "405B", "sizeGB": 243.0, "quant": "Q4_K_M", "minRAMGB": 256 }
+      ]
+    },
+    {
+      "id": "llama3.3",
+      "displayName": "Llama 3.3",
+      "developer": "Meta",
+      "family": "llama",
+      "types": ["chat"],
+      "description": "70B model that matches Llama 3.1 405B quality on many tasks at a fraction of the cost. Great tool-use and multilingual chat.",
+      "license": "Llama 3.3 Community License",
+      "contextLength": 131072,
+      "releaseDate": "2024-12",
+      "capabilities": ["tools", "multilingual"],
+      "homepage": "https://ollama.com/library/llama3.3",
+      "variants": [
+        { "tag": "llama3.3:70b", "params": "70B", "sizeGB": 43.0, "quant": "Q4_K_M", "minRAMGB": 64 }
+      ]
+    },
+    {
+      "id": "llama4",
+      "displayName": "Llama 4",
+      "developer": "Meta",
+      "family": "llama",
+      "types": ["chat", "vision"],
+      "description": "Natively multimodal mixture-of-experts models with very long context (Scout up to 10M tokens). Only a few experts activate per token.",
+      "license": "Llama 4 Community License",
+      "contextLength": 1048576,
+      "releaseDate": "2025-04",
+      "capabilities": ["tools", "vision", "moe", "multilingual"],
+      "homepage": "https://ollama.com/library/llama4",
+      "variants": [
+        { "tag": "llama4:scout", "params": "109B (17B active)", "sizeGB": 67.0, "quant": "Q4_K_M", "minRAMGB": 80 },
+        { "tag": "llama4:maverick", "params": "400B (17B active)", "sizeGB": 245.0, "quant": "Q4_K_M", "minRAMGB": 256 }
+      ]
+    },
+    {
+      "id": "qwen3",
+      "displayName": "Qwen 3",
+      "developer": "Alibaba",
+      "family": "qwen",
+      "types": ["chat", "reasoning"],
+      "description": "Latest Qwen generation with hybrid thinking/non-thinking modes, strong reasoning, coding and agentic tool use. Dense and MoE sizes.",
+      "license": "Apache 2.0",
+      "contextLength": 131072,
+      "releaseDate": "2025-04",
+      "capabilities": ["tools", "reasoning", "multilingual"],
+      "homepage": "https://ollama.com/library/qwen3",
+      "variants": [
+        { "tag": "qwen3:0.6b", "params": "0.6B", "sizeGB": 0.5, "quant": "Q4_K_M", "minRAMGB": 3 },
+        { "tag": "qwen3:1.7b", "params": "1.7B", "sizeGB": 1.4, "quant": "Q4_K_M", "minRAMGB": 4 },
+        { "tag": "qwen3:4b", "params": "4B", "sizeGB": 2.6, "quant": "Q4_K_M", "minRAMGB": 8 },
+        { "tag": "qwen3:8b", "params": "8B", "sizeGB": 5.2, "quant": "Q4_K_M", "minRAMGB": 12 },
+        { "tag": "qwen3:14b", "params": "14B", "sizeGB": 9.3, "quant": "Q4_K_M", "minRAMGB": 20 },
+        { "tag": "qwen3:32b", "params": "32B", "sizeGB": 20.0, "quant": "Q4_K_M", "minRAMGB": 32 },
+        { "tag": "qwen3:30b-a3b", "params": "30B (3B active)", "sizeGB": 18.6, "quant": "Q4_K_M", "minRAMGB": 32 },
+        { "tag": "qwen3:235b-a22b", "params": "235B (22B active)", "sizeGB": 142.0, "quant": "Q4_K_M", "minRAMGB": 160 }
+      ]
+    },
+    {
+      "id": "qwen2.5",
+      "displayName": "Qwen 2.5",
+      "developer": "Alibaba",
+      "family": "qwen",
+      "types": ["chat"],
+      "description": "Well-rounded multilingual models with solid tool calling and long context. Reliable general-purpose agent models across many sizes.",
+      "license": "Apache 2.0 (3B & 72B: Qwen License)",
+      "contextLength": 32768,
+      "releaseDate": "2024-09",
+      "capabilities": ["tools", "multilingual"],
+      "homepage": "https://ollama.com/library/qwen2.5",
+      "variants": [
+        { "tag": "qwen2.5:0.5b", "params": "0.5B", "sizeGB": 0.4, "quant": "Q4_K_M", "minRAMGB": 3 },
+        { "tag": "qwen2.5:1.5b", "params": "1.5B", "sizeGB": 1.0, "quant": "Q4_K_M", "minRAMGB": 4 },
+        { "tag": "qwen2.5:3b", "params": "3B", "sizeGB": 1.9, "quant": "Q4_K_M", "minRAMGB": 8 },
+        { "tag": "qwen2.5:7b", "params": "7B", "sizeGB": 4.7, "quant": "Q4_K_M", "minRAMGB": 12 },
+        { "tag": "qwen2.5:14b", "params": "14B", "sizeGB": 9.0, "quant": "Q4_K_M", "minRAMGB": 20 },
+        { "tag": "qwen2.5:32b", "params": "32B", "sizeGB": 20.0, "quant": "Q4_K_M", "minRAMGB": 32 },
+        { "tag": "qwen2.5:72b", "params": "72B", "sizeGB": 47.0, "quant": "Q4_K_M", "minRAMGB": 64 }
+      ]
+    },
+    {
+      "id": "qwen2.5-coder",
+      "displayName": "Qwen 2.5 Coder",
+      "developer": "Alibaba",
+      "family": "qwen",
+      "types": ["code"],
+      "description": "Code-specialist Qwen models with excellent fill-in-the-middle, repo-level understanding and code agent performance. Best small local coder.",
+      "license": "Apache 2.0 (3B: Qwen License)",
+      "contextLength": 131072,
+      "releaseDate": "2024-11",
+      "capabilities": ["tools", "fim", "code"],
+      "homepage": "https://ollama.com/library/qwen2.5-coder",
+      "variants": [
+        { "tag": "qwen2.5-coder:0.5b", "params": "0.5B", "sizeGB": 0.4, "quant": "Q4_K_M", "minRAMGB": 3 },
+        { "tag": "qwen2.5-coder:1.5b", "params": "1.5B", "sizeGB": 1.0, "quant": "Q4_K_M", "minRAMGB": 4 },
+        { "tag": "qwen2.5-coder:3b", "params": "3B", "sizeGB": 1.9, "quant": "Q4_K_M", "minRAMGB": 8 },
+        { "tag": "qwen2.5-coder:7b", "params": "7B", "sizeGB": 4.7, "quant": "Q4_K_M", "minRAMGB": 12 },
+        { "tag": "qwen2.5-coder:14b", "params": "14B", "sizeGB": 9.0, "quant": "Q4_K_M", "minRAMGB": 20 },
+        { "tag": "qwen2.5-coder:32b", "params": "32B", "sizeGB": 20.0, "quant": "Q4_K_M", "minRAMGB": 32 }
+      ]
+    },
+    {
+      "id": "deepseek-r1",
+      "displayName": "DeepSeek-R1",
+      "developer": "DeepSeek",
+      "family": "deepseek",
+      "types": ["reasoning"],
+      "description": "Open reasoning models trained with large-scale RL. Emit explicit chain-of-thought. Distills bring R1-style reasoning to small sizes.",
+      "license": "MIT",
+      "contextLength": 131072,
+      "releaseDate": "2025-01",
+      "capabilities": ["reasoning", "cot"],
+      "homepage": "https://ollama.com/library/deepseek-r1",
+      "variants": [
+        { "tag": "deepseek-r1:1.5b", "params": "1.5B", "sizeGB": 1.1, "quant": "Q4_K_M", "minRAMGB": 4 },
+        { "tag": "deepseek-r1:7b", "params": "7B", "sizeGB": 4.7, "quant": "Q4_K_M", "minRAMGB": 12 },
+        { "tag": "deepseek-r1:8b", "params": "8B", "sizeGB": 5.2, "quant": "Q4_K_M", "minRAMGB": 12 },
+        { "tag": "deepseek-r1:14b", "params": "14B", "sizeGB": 9.0, "quant": "Q4_K_M", "minRAMGB": 20 },
+        { "tag": "deepseek-r1:32b", "params": "32B", "sizeGB": 20.0, "quant": "Q4_K_M", "minRAMGB": 32 },
+        { "tag": "deepseek-r1:70b", "params": "70B", "sizeGB": 43.0, "quant": "Q4_K_M", "minRAMGB": 64 },
+        { "tag": "deepseek-r1:671b", "params": "671B (37B active)", "sizeGB": 404.0, "quant": "Q4_K_M", "minRAMGB": 480 }
+      ]
+    },
+    {
+      "id": "deepseek-v3",
+      "displayName": "DeepSeek-V3",
+      "developer": "DeepSeek",
+      "family": "deepseek",
+      "types": ["chat"],
+      "description": "671B mixture-of-experts flagship with 37B active params. Top-tier open general chat and coding, but needs a very large machine.",
+      "license": "DeepSeek License",
+      "contextLength": 131072,
+      "releaseDate": "2024-12",
+      "capabilities": ["tools", "moe", "code"],
+      "homepage": "https://ollama.com/library/deepseek-v3",
+      "variants": [
+        { "tag": "deepseek-v3:671b", "params": "671B (37B active)", "sizeGB": 404.0, "quant": "Q4_K_M", "minRAMGB": 480 }
+      ]
+    },
+    {
+      "id": "gemma3",
+      "displayName": "Gemma 3",
+      "developer": "Google",
+      "family": "gemma",
+      "types": ["chat", "vision"],
+      "description": "Google's efficient open models. 4B+ are multimodal (text + image) with 128K context and strong multilingual chat. Runs well on a single machine.",
+      "license": "Gemma Terms of Use",
+      "contextLength": 131072,
+      "releaseDate": "2025-03",
+      "capabilities": ["vision", "multilingual"],
+      "homepage": "https://ollama.com/library/gemma3",
+      "variants": [
+        { "tag": "gemma3:1b", "params": "1B", "sizeGB": 0.8, "quant": "Q4_K_M", "minRAMGB": 4 },
+        { "tag": "gemma3:4b", "params": "4B", "sizeGB": 3.3, "quant": "Q4_K_M", "minRAMGB": 8 },
+        { "tag": "gemma3:12b", "params": "12B", "sizeGB": 8.1, "quant": "Q4_K_M", "minRAMGB": 16 },
+        { "tag": "gemma3:27b", "params": "27B", "sizeGB": 17.0, "quant": "Q4_K_M", "minRAMGB": 32 }
+      ]
+    },
+    {
+      "id": "gemma2",
+      "displayName": "Gemma 2",
+      "developer": "Google",
+      "family": "gemma",
+      "types": ["chat"],
+      "description": "Previous-gen Gemma text models. Strong quality-per-size and very stable. Good lightweight chat backbone.",
+      "license": "Gemma Terms of Use",
+      "contextLength": 8192,
+      "releaseDate": "2024-06",
+      "capabilities": ["multilingual"],
+      "homepage": "https://ollama.com/library/gemma2",
+      "variants": [
+        { "tag": "gemma2:2b", "params": "2B", "sizeGB": 1.6, "quant": "Q4_K_M", "minRAMGB": 6 },
+        { "tag": "gemma2:9b", "params": "9B", "sizeGB": 5.4, "quant": "Q4_K_M", "minRAMGB": 12 },
+        { "tag": "gemma2:27b", "params": "27B", "sizeGB": 16.0, "quant": "Q4_K_M", "minRAMGB": 32 }
+      ]
+    },
+    {
+      "id": "phi4",
+      "displayName": "Phi-4",
+      "developer": "Microsoft",
+      "family": "phi",
+      "types": ["chat", "reasoning"],
+      "description": "14B model punching far above its weight on reasoning and math thanks to high-quality synthetic training data.",
+      "license": "MIT",
+      "contextLength": 16384,
+      "releaseDate": "2024-12",
+      "capabilities": ["reasoning"],
+      "homepage": "https://ollama.com/library/phi4",
+      "variants": [
+        { "tag": "phi4:14b", "params": "14B", "sizeGB": 9.1, "quant": "Q4_K_M", "minRAMGB": 20 }
+      ]
+    },
+    {
+      "id": "phi4-mini",
+      "displayName": "Phi-4 Mini",
+      "developer": "Microsoft",
+      "family": "phi",
+      "types": ["chat"],
+      "description": "3.8B compact model with function calling and 128K context. Efficient default for lightweight agents.",
+      "license": "MIT",
+      "contextLength": 131072,
+      "releaseDate": "2025-02",
+      "capabilities": ["tools"],
+      "homepage": "https://ollama.com/library/phi4-mini",
+      "variants": [
+        { "tag": "phi4-mini:3.8b", "params": "3.8B", "sizeGB": 2.5, "quant": "Q4_K_M", "minRAMGB": 8 }
+      ]
+    },
+    {
+      "id": "mistral",
+      "displayName": "Mistral 7B",
+      "developer": "Mistral AI",
+      "family": "mistral",
+      "types": ["chat"],
+      "description": "The classic fast, permissive 7B model. Great latency and a dependable baseline for local agents.",
+      "license": "Apache 2.0",
+      "contextLength": 32768,
+      "releaseDate": "2023-09",
+      "capabilities": ["tools"],
+      "homepage": "https://ollama.com/library/mistral",
+      "variants": [
+        { "tag": "mistral:7b", "params": "7B", "sizeGB": 4.1, "quant": "Q4_K_M", "minRAMGB": 12 }
+      ]
+    },
+    {
+      "id": "mistral-nemo",
+      "displayName": "Mistral Nemo",
+      "developer": "Mistral AI",
+      "family": "mistral",
+      "types": ["chat"],
+      "description": "12B model (with NVIDIA) offering 128K context and strong multilingual + tool use in a size that fits most laptops.",
+      "license": "Apache 2.0",
+      "contextLength": 131072,
+      "releaseDate": "2024-07",
+      "capabilities": ["tools", "multilingual"],
+      "homepage": "https://ollama.com/library/mistral-nemo",
+      "variants": [
+        { "tag": "mistral-nemo:12b", "params": "12B", "sizeGB": 7.1, "quant": "Q4_K_M", "minRAMGB": 16 }
+      ]
+    },
+    {
+      "id": "mistral-small3.1",
+      "displayName": "Mistral Small 3.1",
+      "developer": "Mistral AI",
+      "family": "mistral",
+      "types": ["chat", "vision"],
+      "description": "24B multimodal model with vision and 128K context. Fast, capable open workhorse for agentic apps.",
+      "license": "Apache 2.0",
+      "contextLength": 131072,
+      "releaseDate": "2025-03",
+      "capabilities": ["tools", "vision"],
+      "homepage": "https://ollama.com/library/mistral-small3.1",
+      "variants": [
+        { "tag": "mistral-small3.1:24b", "params": "24B", "sizeGB": 15.0, "quant": "Q4_K_M", "minRAMGB": 28 }
+      ]
+    },
+    {
+      "id": "mixtral",
+      "displayName": "Mixtral",
+      "developer": "Mistral AI",
+      "family": "mistral",
+      "types": ["chat"],
+      "description": "Sparse mixture-of-experts models. Only 2 of 8 experts run per token, giving big-model quality at lower compute per token.",
+      "license": "Apache 2.0",
+      "contextLength": 32768,
+      "releaseDate": "2023-12",
+      "capabilities": ["moe", "tools"],
+      "homepage": "https://ollama.com/library/mixtral",
+      "variants": [
+        { "tag": "mixtral:8x7b", "params": "47B (13B active)", "sizeGB": 26.0, "quant": "Q4_K_M", "minRAMGB": 48 },
+        { "tag": "mixtral:8x22b", "params": "141B (39B active)", "sizeGB": 80.0, "quant": "Q4_K_M", "minRAMGB": 96 }
+      ]
+    },
+    {
+      "id": "codellama",
+      "displayName": "Code Llama",
+      "developer": "Meta",
+      "family": "llama",
+      "types": ["code"],
+      "description": "Llama 2 based code models with fill-in-the-middle and long context. Solid, permissive local coding assistants.",
+      "license": "Llama 2 Community License",
+      "contextLength": 16384,
+      "releaseDate": "2023-08",
+      "capabilities": ["fim", "code"],
+      "homepage": "https://ollama.com/library/codellama",
+      "variants": [
+        { "tag": "codellama:7b", "params": "7B", "sizeGB": 3.8, "quant": "Q4_0", "minRAMGB": 12 },
+        { "tag": "codellama:13b", "params": "13B", "sizeGB": 7.4, "quant": "Q4_0", "minRAMGB": 20 },
+        { "tag": "codellama:34b", "params": "34B", "sizeGB": 19.0, "quant": "Q4_0", "minRAMGB": 32 },
+        { "tag": "codellama:70b", "params": "70B", "sizeGB": 39.0, "quant": "Q4_0", "minRAMGB": 64 }
+      ]
+    },
+    {
+      "id": "codestral",
+      "displayName": "Codestral",
+      "developer": "Mistral AI",
+      "family": "mistral",
+      "types": ["code"],
+      "description": "22B code model fluent in 80+ languages with strong fill-in-the-middle. A capable local coding agent backbone.",
+      "license": "Mistral AI Non-Production License",
+      "contextLength": 32768,
+      "releaseDate": "2024-05",
+      "capabilities": ["fim", "code"],
+      "homepage": "https://ollama.com/library/codestral",
+      "variants": [
+        { "tag": "codestral:22b", "params": "22B", "sizeGB": 13.0, "quant": "Q4_K_M", "minRAMGB": 24 }
+      ]
+    },
+    {
+      "id": "deepseek-coder-v2",
+      "displayName": "DeepSeek-Coder-V2",
+      "developer": "DeepSeek",
+      "family": "deepseek",
+      "types": ["code"],
+      "description": "MoE code models rivaling closed coders. 16B variant activates ~2.4B params per token for fast local coding.",
+      "license": "DeepSeek License",
+      "contextLength": 131072,
+      "releaseDate": "2024-06",
+      "capabilities": ["moe", "code", "fim"],
+      "homepage": "https://ollama.com/library/deepseek-coder-v2",
+      "variants": [
+        { "tag": "deepseek-coder-v2:16b", "params": "16B (2.4B active)", "sizeGB": 8.9, "quant": "Q4_K_M", "minRAMGB": 20 },
+        { "tag": "deepseek-coder-v2:236b", "params": "236B (21B active)", "sizeGB": 133.0, "quant": "Q4_K_M", "minRAMGB": 160 }
+      ]
+    },
+    {
+      "id": "starcoder2",
+      "displayName": "StarCoder2",
+      "developer": "BigCode",
+      "family": "starcoder",
+      "types": ["code"],
+      "description": "Fully open code models trained on The Stack v2. Good for completion and fill-in-the-middle across many languages.",
+      "license": "BigCode OpenRAIL-M",
+      "contextLength": 16384,
+      "releaseDate": "2024-02",
+      "capabilities": ["fim", "code"],
+      "homepage": "https://ollama.com/library/starcoder2",
+      "variants": [
+        { "tag": "starcoder2:3b", "params": "3B", "sizeGB": 1.7, "quant": "Q4_0", "minRAMGB": 8 },
+        { "tag": "starcoder2:7b", "params": "7B", "sizeGB": 4.0, "quant": "Q4_0", "minRAMGB": 12 },
+        { "tag": "starcoder2:15b", "params": "15B", "sizeGB": 9.1, "quant": "Q4_0", "minRAMGB": 20 }
+      ]
+    },
+    {
+      "id": "command-r",
+      "displayName": "Command R",
+      "developer": "Cohere",
+      "family": "command-r",
+      "types": ["chat"],
+      "description": "35B model optimized for RAG and tool use with 128K context. Purpose-built for retrieval-augmented agents.",
+      "license": "CC-BY-NC 4.0",
+      "contextLength": 131072,
+      "releaseDate": "2024-03",
+      "capabilities": ["tools", "rag"],
+      "homepage": "https://ollama.com/library/command-r",
+      "variants": [
+        { "tag": "command-r:35b", "params": "35B", "sizeGB": 20.0, "quant": "Q4_K_M", "minRAMGB": 40 }
+      ]
+    },
+    {
+      "id": "command-r-plus",
+      "displayName": "Command R+",
+      "developer": "Cohere",
+      "family": "command-r",
+      "types": ["chat"],
+      "description": "104B flagship for advanced RAG, multi-step tool use and multilingual enterprise workloads.",
+      "license": "CC-BY-NC 4.0",
+      "contextLength": 131072,
+      "releaseDate": "2024-04",
+      "capabilities": ["tools", "rag", "multilingual"],
+      "homepage": "https://ollama.com/library/command-r-plus",
+      "variants": [
+        { "tag": "command-r-plus:104b", "params": "104B", "sizeGB": 59.0, "quant": "Q4_K_M", "minRAMGB": 80 }
+      ]
+    },
+    {
+      "id": "llama3.2-vision",
+      "displayName": "Llama 3.2 Vision",
+      "developer": "Meta",
+      "family": "llama",
+      "types": ["vision"],
+      "description": "Multimodal Llama with image reasoning: document understanding, charts, captioning and visual Q&A.",
+      "license": "Llama 3.2 Community License",
+      "contextLength": 131072,
+      "releaseDate": "2024-09",
+      "capabilities": ["vision"],
+      "homepage": "https://ollama.com/library/llama3.2-vision",
+      "variants": [
+        { "tag": "llama3.2-vision:11b", "params": "11B", "sizeGB": 7.8, "quant": "Q4_K_M", "minRAMGB": 16 },
+        { "tag": "llama3.2-vision:90b", "params": "90B", "sizeGB": 55.0, "quant": "Q4_K_M", "minRAMGB": 72 }
+      ]
+    },
+    {
+      "id": "llava",
+      "displayName": "LLaVA",
+      "developer": "LLaVA Team",
+      "family": "llava",
+      "types": ["vision"],
+      "description": "Popular open vision-language assistant combining a vision encoder with an LLM for image chat and captioning.",
+      "license": "Apache 2.0",
+      "contextLength": 4096,
+      "releaseDate": "2023-10",
+      "capabilities": ["vision"],
+      "homepage": "https://ollama.com/library/llava",
+      "variants": [
+        { "tag": "llava:7b", "params": "7B", "sizeGB": 4.7, "quant": "Q4_0", "minRAMGB": 12 },
+        { "tag": "llava:13b", "params": "13B", "sizeGB": 8.0, "quant": "Q4_0", "minRAMGB": 20 },
+        { "tag": "llava:34b", "params": "34B", "sizeGB": 20.0, "quant": "Q4_0", "minRAMGB": 32 }
+      ]
+    },
+    {
+      "id": "minicpm-v",
+      "displayName": "MiniCPM-V",
+      "developer": "OpenBMB",
+      "family": "minicpm",
+      "types": ["vision"],
+      "description": "Efficient 8B vision-language model with strong OCR and high-resolution image understanding for its size.",
+      "license": "Apache 2.0",
+      "contextLength": 8192,
+      "releaseDate": "2024-08",
+      "capabilities": ["vision", "ocr"],
+      "homepage": "https://ollama.com/library/minicpm-v",
+      "variants": [
+        { "tag": "minicpm-v:8b", "params": "8B", "sizeGB": 5.5, "quant": "Q4_K_M", "minRAMGB": 12 }
+      ]
+    },
+    {
+      "id": "moondream",
+      "displayName": "Moondream",
+      "developer": "Moondream",
+      "family": "moondream",
+      "types": ["vision"],
+      "description": "Tiny 1.8B vision model designed to run efficiently on edge devices. Fast image captioning and Q&A.",
+      "license": "Apache 2.0",
+      "contextLength": 2048,
+      "releaseDate": "2024-03",
+      "capabilities": ["vision"],
+      "homepage": "https://ollama.com/library/moondream",
+      "variants": [
+        { "tag": "moondream:1.8b", "params": "1.8B", "sizeGB": 1.7, "quant": "Q4_K_M", "minRAMGB": 6 }
+      ]
+    },
+    {
+      "id": "granite3.3",
+      "displayName": "Granite 3.3",
+      "developer": "IBM",
+      "family": "granite",
+      "types": ["chat", "code"],
+      "description": "IBM's enterprise-focused open models with tool calling, long context and a permissive Apache license.",
+      "license": "Apache 2.0",
+      "contextLength": 131072,
+      "releaseDate": "2025-04",
+      "capabilities": ["tools", "code"],
+      "homepage": "https://ollama.com/library/granite3.3",
+      "variants": [
+        { "tag": "granite3.3:2b", "params": "2B", "sizeGB": 1.5, "quant": "Q4_K_M", "minRAMGB": 6 },
+        { "tag": "granite3.3:8b", "params": "8B", "sizeGB": 4.9, "quant": "Q4_K_M", "minRAMGB": 12 }
+      ]
+    },
+    {
+      "id": "smollm2",
+      "displayName": "SmolLM2",
+      "developer": "Hugging Face",
+      "family": "smollm",
+      "types": ["chat"],
+      "description": "Family of tiny, fully-open models (down to 135M) for on-device use and fast experimentation.",
+      "license": "Apache 2.0",
+      "contextLength": 8192,
+      "releaseDate": "2024-11",
+      "capabilities": ["tools"],
+      "homepage": "https://ollama.com/library/smollm2",
+      "variants": [
+        { "tag": "smollm2:135m", "params": "135M", "sizeGB": 0.3, "quant": "Q4_K_M", "minRAMGB": 2 },
+        { "tag": "smollm2:360m", "params": "360M", "sizeGB": 0.4, "quant": "Q4_K_M", "minRAMGB": 2 },
+        { "tag": "smollm2:1.7b", "params": "1.7B", "sizeGB": 1.1, "quant": "Q4_K_M", "minRAMGB": 4 }
+      ]
+    },
+    {
+      "id": "tinyllama",
+      "displayName": "TinyLlama",
+      "developer": "TinyLlama",
+      "family": "llama",
+      "types": ["chat"],
+      "description": "1.1B model trained on 3T tokens. Extremely light — handy for smoke tests and tiny devices.",
+      "license": "Apache 2.0",
+      "contextLength": 2048,
+      "releaseDate": "2024-01",
+      "capabilities": [],
+      "homepage": "https://ollama.com/library/tinyllama",
+      "variants": [
+        { "tag": "tinyllama:1.1b", "params": "1.1B", "sizeGB": 0.6, "quant": "Q4_0", "minRAMGB": 3 }
+      ]
+    },
+    {
+      "id": "nomic-embed-text",
+      "displayName": "Nomic Embed Text",
+      "developer": "Nomic AI",
+      "family": "nomic",
+      "types": ["embedding"],
+      "description": "High-performing open text embedding model with 8K context. A strong default for local RAG pipelines.",
+      "license": "Apache 2.0",
+      "contextLength": 8192,
+      "releaseDate": "2024-02",
+      "capabilities": ["embedding"],
+      "homepage": "https://ollama.com/library/nomic-embed-text",
+      "variants": [
+        { "tag": "nomic-embed-text:latest", "params": "137M", "sizeGB": 0.3, "quant": "F16", "minRAMGB": 2 }
+      ]
+    },
+    {
+      "id": "mxbai-embed-large",
+      "displayName": "mxbai-embed-large",
+      "developer": "Mixedbread AI",
+      "family": "mxbai",
+      "types": ["embedding"],
+      "description": "State-of-the-art large sentence-embedding model for retrieval and semantic search.",
+      "license": "Apache 2.0",
+      "contextLength": 512,
+      "releaseDate": "2024-03",
+      "capabilities": ["embedding"],
+      "homepage": "https://ollama.com/library/mxbai-embed-large",
+      "variants": [
+        { "tag": "mxbai-embed-large:335m", "params": "335M", "sizeGB": 0.7, "quant": "F16", "minRAMGB": 3 }
+      ]
+    },
+    {
+      "id": "bge-m3",
+      "displayName": "BGE-M3",
+      "developer": "BAAI",
+      "family": "bge",
+      "types": ["embedding"],
+      "description": "Versatile multilingual embedding model supporting dense, sparse and multi-vector retrieval with 8K context.",
+      "license": "MIT",
+      "contextLength": 8192,
+      "releaseDate": "2024-01",
+      "capabilities": ["embedding", "multilingual"],
+      "homepage": "https://ollama.com/library/bge-m3",
+      "variants": [
+        { "tag": "bge-m3:567m", "params": "567M", "sizeGB": 1.2, "quant": "F16", "minRAMGB": 3 }
+      ]
+    }
+  ]
+}
