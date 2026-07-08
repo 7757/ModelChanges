@@ -11,7 +11,9 @@ final class BundledServer {
     var isRunning: Bool { process?.isRunning ?? false }
 
     /// Launch the bundled `ollama serve` if it isn't already running.
-    func start(binary: URL, modelsDir: URL, host: String) {
+    /// `keepAlive` becomes the *server-wide default* so gateway requests that
+    /// omit keep_alive still keep the model (and its prompt KV cache) resident.
+    func start(binary: URL, modelsDir: URL, host: String, keepAlive: String, contextLength: Int) {
         if isRunning { return }
         try? FileManager.default.createDirectory(at: modelsDir, withIntermediateDirectories: true)
 
@@ -21,6 +23,8 @@ final class BundledServer {
         var env = ProcessInfo.processInfo.environment
         env["OLLAMA_HOST"] = host
         env["OLLAMA_MODELS"] = modelsDir.path
+        env["OLLAMA_KEEP_ALIVE"] = keepAlive
+        if contextLength > 0 { env["OLLAMA_CONTEXT_LENGTH"] = String(contextLength) }
         p.environment = env
         p.standardOutput = FileHandle.nullDevice
         p.standardError = FileHandle.nullDevice

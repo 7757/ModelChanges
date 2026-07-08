@@ -2,6 +2,12 @@
 
 All notable changes to ModelChanges are documented here.
 
+## 1.1.1 - 2026-07-08
+
+- Keep models resident for gateway / agent workloads: the bundled server now sets `OLLAMA_KEEP_ALIVE` (default: never unload), so requests that omit `keep_alive` no longer let the model — and its large prompt KV cache — unload. This removes the slow cold re-prefill on the next call (e.g. ~55s for a 22K-token system prompt). Configurable in Settings → Agent performance.
+- Optional context-window override (`OLLAMA_CONTEXT_LENGTH`) to avoid silent prompt truncation as agent context grows.
+- Warm-up prompt: paste your agent's real system prompt to pre-heat the prefix cache after a deploy, so the first request skips the long prefill.
+
 ## 1.1.0 - 2026-07-07
 
 - Self-contained: the Ollama runtime is now bundled inside the app — no separate install. It runs headless on a private model directory and stops cleanly when you quit.

@@ -33,7 +33,28 @@ final class AppState: ObservableObject {
     @Published var importableModels: [String] = []         // found in a legacy ~/.ollama
     @Published var importDismissed = false
     @Published var importing = false
-    @Published var keepAlive: String = "30m"   // how long models stay loaded
+    // How long a model (and its prompt KV cache) stays resident. Set as the
+    // server-wide OLLAMA_KEEP_ALIVE so gateway requests that omit keep_alive
+    // don't let it unload — default -1 (never unload) for agent workloads.
+    @Published var keepAlive: String = UserDefaults.standard.string(forKey: "ModelChanges.keepAlive") ?? "-1" {
+        didSet {
+            UserDefaults.standard.set(keepAlive, forKey: "ModelChanges.keepAlive")
+            markServerRestartNeeded()
+        }
+    }
+    // Override the default context window (OLLAMA_CONTEXT_LENGTH). 0 = Auto.
+    @Published var contextOverride: Int = UserDefaults.standard.integer(forKey: "ModelChanges.contextOverride") {
+        didSet {
+            UserDefaults.standard.set(contextOverride, forKey: "ModelChanges.contextOverride")
+            markServerRestartNeeded()
+        }
+    }
+    // The agent's real system prompt, used to pre-heat the prefix KV cache.
+    @Published var warmupPrompt: String = UserDefaults.standard.string(forKey: "ModelChanges.warmupPrompt") ?? "" {
+        didSet { UserDefaults.standard.set(warmupPrompt, forKey: "ModelChanges.warmupPrompt") }
+    }
+    @Published var serverNeedsRestart = false
+    @Published var warming = false
     @Published var wiping = false
     @Published var launchAtLogin: Bool = LoginItem.isEnabled
     @Published var language: AppLanguage = AppLanguage.load() {
@@ -155,6 +176,50 @@ final class AppState: ObservableObject {
     func clearHistory() {
         history = []
         HistoryStore.save(history)
+    }
+
+    // MARK: - Agent performance (keep-alive / context / warm-up)
+
+    private func markServerRestartNeeded() {
+        if serverReachable && hasBundledRuntime { serverNeedsRestart = true }
+    }
+
+    /// Restart the bundled server to apply new env (keep-alive / context).
+    /// Note: this drops any warm prompt cache — do it before an agent session.
+    func restartServer() {
+        Task {
+            BundledServer.shared.stop()
+            serverReachable = false
+            serverNeedsRestart = false
+            try? await Task.sleep(nanoseconds: 700_000_000)
+            startServer()
+        }
+    }
+
+    /// Pre-heat the prefix KV cache by sending the agent's real system prompt,
+    /// so the user's first request doesn't pay the full prefill (~55s for 22K).
+    func warmUp(_ model: String) {
+        let prompt = warmupPrompt.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !prompt.isEmpty, !model.isEmpty, !warming else { return }
+        warming = true
+        log(t("log.warming", model))
+        Task {
+            var options: [String: Any] = ["num_predict": 1]
+            if contextOverride > 0 { options["num_ctx"] = contextOverride }
+            let body: [String: Any] = [
+                "model": model,
+                "stream": false,
+                "keep_alive": keepAlive == "-1" ? -1 : keepAlive,
+                "options": options,
+                "messages": [
+                    ["role": "system", "content": prompt],
+                    ["role": "user", "content": "ready"]
+                ]
+            ]
+            _ = try? await postJSONObject("/api/chat", body, timeout: 600)
+            warming = false
+            log(t("log.warmed", model))
+        }
     }
 
     // MARK: - Live library sync
@@ -313,6 +378,7 @@ final class AppState: ObservableObject {
                 self.deployments[tag]?.status = self.t("progress.ready")
                 self.log(self.t("log.ready", tag))
                 self.record(tag, alreadyInstalled ? .started : .deployed)
+                if !self.warmupPrompt.isEmpty { self.warmUp(tag) }
                 self.pullTasks[tag] = nil
             }
             await self.refresh()
@@ -700,7 +766,9 @@ final class AppState: ObservableObject {
             if self.serverReachable { self.detectInstall(); return }  // already up
 
             if self.hasBundledRuntime, let bin = self.bundledBinaryURL {
-                BundledServer.shared.start(binary: bin, modelsDir: self.modelsDirURL, host: "127.0.0.1:11434")
+                BundledServer.shared.start(binary: bin, modelsDir: self.modelsDirURL,
+                                           host: "127.0.0.1:11434",
+                                           keepAlive: self.keepAlive, contextLength: self.contextOverride)
             } else if let appPath = Self.ollamaAppPath() {
                 _ = try? await Task.detached { try Self.runDetached("/usr/bin/open", [appPath]) }.value
             } else if let path = self.ollamaPath {

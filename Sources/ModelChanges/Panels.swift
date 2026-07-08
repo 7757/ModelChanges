@@ -756,6 +756,10 @@ struct SettingsSheet: View {
         ]
     }
 
+    private var contextOptions: [(Int, String)] {
+        [(0, app.t("settings.contextAuto")), (8192, "8K"), (16384, "16K"), (32768, "32K"), (65536, "64K")]
+    }
+
     private var languageSelection: Binding<AppLanguage> {
         Binding(get: { app.language }, set: { app.setLanguage($0) })
     }
@@ -786,19 +790,6 @@ struct SettingsSheet: View {
 
                         Divider().padding(.leading, 36)
 
-                        SettingsRow(title: app.t("settings.keepAlive"),
-                                    subtitle: app.t("settings.keepAliveSubtitle"),
-                                    systemImage: "clock") {
-                            Picker("", selection: $app.keepAlive) {
-                                ForEach(keepAliveOptions, id: \.0) { Text($0.1).tag($0.0) }
-                            }
-                            .labelsHidden()
-                            .pickerStyle(.segmented)
-                            .frame(width: 250)
-                        }
-
-                        Divider().padding(.leading, 36)
-
                         SettingsRow(title: app.t("settings.launchAtLogin"),
                                     subtitle: app.t("settings.launchAtLoginSubtitle"),
                                     systemImage: "power") {
@@ -806,6 +797,79 @@ struct SettingsSheet: View {
                                                      set: { app.setLaunchAtLogin($0) }))
                                 .labelsHidden()
                                 .toggleStyle(.switch)
+                        }
+                    }
+
+                    SettingsGroup(title: app.t("settings.agentPerf")) {
+                        SettingsRow(title: app.t("settings.keepAlive"),
+                                    subtitle: app.t("settings.keepAliveSubtitle"),
+                                    systemImage: "bolt.fill") {
+                            Picker("", selection: $app.keepAlive) {
+                                ForEach(keepAliveOptions, id: \.0) { Text($0.1).tag($0.0) }
+                            }
+                            .labelsHidden().pickerStyle(.segmented).frame(width: 250)
+                        }
+
+                        Divider().padding(.leading, 36)
+
+                        SettingsRow(title: app.t("settings.context"),
+                                    subtitle: app.t("settings.contextSubtitle"),
+                                    systemImage: "text.alignleft") {
+                            Picker("", selection: $app.contextOverride) {
+                                ForEach(contextOptions, id: \.0) { Text($0.1).tag($0.0) }
+                            }
+                            .labelsHidden().pickerStyle(.segmented).frame(width: 300)
+                        }
+
+                        Divider().padding(.leading, 36)
+
+                        VStack(alignment: .leading, spacing: 8) {
+                            Label(app.t("settings.warmup"), systemImage: "flame")
+                                .font(.callout.weight(.semibold))
+                            Text(app.t("settings.warmupSubtitle"))
+                                .font(.caption).foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                            TextEditor(text: $app.warmupPrompt)
+                                .font(.callout.monospaced())
+                                .frame(height: 88)
+                                .scrollContentBackground(.hidden)
+                                .padding(6)
+                                .background(.quaternary.opacity(0.3), in: RoundedRectangle(cornerRadius: 8))
+                                .overlay(alignment: .topLeading) {
+                                    if app.warmupPrompt.isEmpty {
+                                        Text(app.t("settings.warmupPlaceholder"))
+                                            .font(.callout).foregroundStyle(.tertiary)
+                                            .padding(.horizontal, 11).padding(.vertical, 10)
+                                            .allowsHitTesting(false)
+                                    }
+                                }
+                            HStack {
+                                Button {
+                                    if let name = app.running.first?.name { app.warmUp(name) }
+                                } label: {
+                                    Label(app.warming ? app.t("button.warming") : app.t("button.warmNow"),
+                                          systemImage: "flame.fill")
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .disabled(app.warming || app.warmupPrompt.isEmpty || app.running.isEmpty)
+                                Spacer()
+                            }
+                        }
+                        .padding(.horizontal, 12).padding(.vertical, 6)
+
+                        if app.serverNeedsRestart {
+                            Divider().padding(.leading, 36)
+                            HStack(spacing: 10) {
+                                Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(app.t("settings.restartNeeded")).font(.callout)
+                                    Text(app.t("settings.restartWarning")).font(.caption).foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Button(app.t("button.restartApply")) { app.restartServer() }
+                                    .buttonStyle(.borderedProminent)
+                            }
+                            .padding(.horizontal, 12).padding(.vertical, 6)
                         }
                     }
 
