@@ -419,6 +419,7 @@ final class AppState: ObservableObject {
                               userInfo: [NSLocalizedDescriptionKey: "HTTP \(http.statusCode)"])
             }
             for try await line in bytes.lines {
+                if Task.isCancelled { break }
                 guard !line.isEmpty, let d = line.data(using: .utf8) else { continue }
                 guard let p = try? Self.decoder.decode(PullLine.self, from: d) else { continue }
                 if let err = p.error {
@@ -427,6 +428,7 @@ final class AppState: ObservableObject {
                 }
                 let status = p.status ?? ""
                 await MainActor.run {
+                    guard !Task.isCancelled else { return }
                     var dp = self.deployments[tag] ?? DeployProgress(tag: tag, status: status)
                     if !status.isEmpty { dp.status = status }
                     dp.total = p.total ?? dp.total
@@ -435,8 +437,17 @@ final class AppState: ObservableObject {
                     self.deployments[tag] = dp
                 }
             }
+            if Task.isCancelled {
+                await MainActor.run { self.deployments[tag] = nil }
+                return false
+            }
             return true
         } catch {
+            // User cancellation is not a failure — clear the chip quietly.
+            if error is CancellationError || (error as? URLError)?.code == .cancelled {
+                await MainActor.run { self.deployments[tag] = nil }
+                return false
+            }
             await MainActor.run { self.fail(tag, error.localizedDescription) }
             return false
         }

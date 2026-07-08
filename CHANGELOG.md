@@ -2,6 +2,10 @@
 
 All notable changes to ModelChanges are documented here.
 
+## 1.1.2 - 2026-07-08
+
+- Fix: cancelling a deploy no longer shows a red `CancellationError` and now clears the progress chip cleanly (cancellation was being treated as a failure and raced with the chip removal).
+
 ## 1.1.1 - 2026-07-08
 
 - Keep models resident for gateway / agent workloads: the bundled server now sets `OLLAMA_KEEP_ALIVE` (default: never unload), so requests that omit `keep_alive` no longer let the model — and its large prompt KV cache — unload. This removes the slow cold re-prefill on the next call (e.g. ~55s for a 22K-token system prompt). Configurable in Settings → Agent performance.
