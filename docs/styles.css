@@ -550,6 +550,16 @@ h3 {
     display: none;
   }
 
+  .creator-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
   .primary-link {
     flex: 0 0 auto;
     padding: 10px 14px;
